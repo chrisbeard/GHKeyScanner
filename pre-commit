@@ -1,0 +1,35 @@
+#! /usr/bin/env python
+
+import os.path, re, subprocess
+
+class colors:
+    # HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    # OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    # UNDERLINE = '\033[4m'
+
+def git_ls():
+    exit_status = 0
+    for f in subprocess.Popen(['git', 'ls-files'], stdout=subprocess.PIPE).stdout.read().strip().split('\n'):
+        if os.path.isfile(f):
+            exit_status = exit_status | check_file(f)
+    return exit_status
+
+def check_file(f):
+    text = open(f).read().lower()
+    keys = "(?:\'|\")?(?:secret_?key|consumer_?secret|auth_?token|api_?key|developer_?key|session_?token)(?:\'|\")?"
+    matches = re.finditer(keys + "\s*?(=|:)\s*?(?:\'|\")?([a-zA-Z0-9\-]{10,50})(\'|\")?", text, re.MULTILINE)
+    status = 0
+    for match in matches:
+        status = 1
+        print "Secret in file: " + colors.OKBLUE + f + colors.ENDC + "\n  " + colors.WARNING + match.group(0) + "\n" + colors.ENDC
+    return status
+
+exit_status = git_ls()
+if exit_status == 1:
+    print colors.BOLD + colors.FAIL + "If secrets are okay to commit, run 'git commit --no-verify'" + colors.ENDC + colors.ENDC
+exit(exit_status)
