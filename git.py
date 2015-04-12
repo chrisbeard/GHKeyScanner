@@ -6,16 +6,11 @@ from pprint import pprint
 from threading import Thread, Lock
 from email.Message import Message
 
-token1 = 'a380558e085098ee62017c1f6027475456bc7e89'
-token2 = '6f0dd1c9c63ed614cb30947739ac2655dbbcbcc2'
 regex = '(?:\'|\")?(?:secret_?key|consumer_?secret|auth_?token|api_?key|developer_?key|session_?token)(?:\'|\")?\s*?(=|:)\s*?(?:\'|\")?([a-zA-Z0-9\-]{10,50})(\'|\")?'
 
 queue = []
 lock = Lock()
 
-username = 'jpalazz3@binghamton.edu'
-password = 'bing03@education';
-server = 'smtp.gmail.com:587';
 
 #imports
 from time import sleep;
